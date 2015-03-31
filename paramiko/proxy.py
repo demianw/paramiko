@@ -41,16 +41,22 @@ class ProxyCommand(ClosingContextManager):
     
     Instances of this class may be used as context managers.
     """
-    def __init__(self, command_line):
+    def __init__(self, command_line, shell=False):
         """
         Create a new CommandProxy instance. The instance created by this
         class can be passed as an argument to the `.Transport` class.
 
         :param str command_line:
             the command that should be executed and used as the proxy.
+        :param bool shell:
+            use shell environment for proxy command execution.
         """
         self.cmd = shlsplit(command_line)
-        self.process = Popen(self.cmd, stdin=PIPE, stdout=PIPE, stderr=PIPE)
+        self.shell = shell
+        self.process = Popen(
+            self.cmd, stdin=PIPE, stdout=PIPE, stderr=PIPE,
+            shell=shell.cmd
+        )
         self.timeout = None
         self.buffer = []
 
